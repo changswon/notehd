@@ -199,39 +199,38 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 }
 
-class WebViewScreen extends StatelessWidget {
+class WebViewScreen extends StatefulWidget {
   const WebViewScreen({Key? key}) : super(key: key);
 
   @override
+  _WebViewScreenState createState() => _WebViewScreenState();
+}
+
+class _WebViewScreenState extends State<WebViewScreen> {
+  late InAppWebViewController _webViewController; // WebView 컨트롤러 선언
+
+  @override
   Widget build(BuildContext context) {
-    final Uri url = Uri.parse(
-        'https://hhicm.gananet.co.kr/build/index.php');
+    final Uri url = Uri.parse('https://hhicm.gananet.co.kr/build/index.php');
 
     return Scaffold(
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed, // item 4개 이상일 경우 추가 해야함
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: '홈',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.receipt),
-            label: '회칙',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.public),
-            label: '공조위원',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.group),
-            label: '회원 연락처',
-          ),
-        ],
-      ),
-      body: InAppWebView(
-        initialUrlRequest: URLRequest(url: WebUri.uri(url)), // WebUri 대신에 Uri 객체를 바로 사용
+      body: WillPopScope( // WillPopScope 추가
+        onWillPop: () async {
+          if (await _webViewController.canGoBack()) { // 웹뷰에서 뒤로 갈 수 있는지 확인
+            _webViewController.goBack(); // 뒤로가기 수행
+            return false; // 뒤로가기 수행되었으므로 이벤트 처리 완료
+          } else {
+            return true; // 웹뷰에서 뒤로 갈 수 없으면 앱 종료
+          }
+        },
+        child: InAppWebView(
+          initialUrlRequest: URLRequest(url: WebUri.uri(url)),
+          onWebViewCreated: (controller) {
+            _webViewController = controller; // WebView 컨트롤러 할당
+          },
+        ),
       ),
     );
   }
 }
+
