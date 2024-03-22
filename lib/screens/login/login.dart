@@ -59,7 +59,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
 //등록된 기기가 있을 때 다시 api 주고 받기
-  void device_update(String mobile) async{
+  void device_update(String mobile) async {
     DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
     AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
     String device_info = '${androidInfo.serialNumber}';
@@ -78,13 +78,11 @@ class _LoginScreenState extends State<LoginScreen> {
       }
     } catch (e) {
       print('API 요청 중 예외 발생: $e');
-
     }
-
   }
 
   void _showLoginResult(Map<String, dynamic> result) async {
-    if (result['result'] == 'success') {
+    if (result['mobile'] == 'success') {
       if (result['already'] == 'Y') {
         String mobile_num = result['mobile_num'];
         // 이미 등록된 기기가 있을 때 처리
@@ -123,6 +121,24 @@ class _LoginScreenState extends State<LoginScreen> {
         _navigateToWebView();
       }
     } else {
+      // 로그인 실패 시 처리
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("로그인 실패"),
+            content: Text("등록되지 않은 회원의 연락처입니다."),
+            actions: [
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).pop(); // 다이얼로그 닫기
+                },
+                child: Text("확인"),
+              ),
+            ],
+          );
+        },
+      );
       print('로그인 실패');
     }
   }
@@ -151,47 +167,55 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         ),
         child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Image.asset(
-                "images/logo2.png",
-                height: 100,
-              ),
-              SizedBox(height: 20),
-              Container(
-                width: 300,
-                child: TextField(
-                  onChanged: (value) {
-                    setState(() {
-                      _userMobile = value;
-                    });
-                  },
-                  keyboardType: TextInputType.phone,
-                  decoration: InputDecoration(
-                    labelText: '휴대폰 번호를 - 없이 입력하세요',
-                    labelStyle: TextStyle(color: Colors.black),
-                    fillColor: Colors.white,
-                    filled: true,
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.blue, width: 2.0),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.blue, width: 2.0),
-                      borderRadius: BorderRadius.circular(12.0),
+          child: SingleChildScrollView( // Wrap your Column with SingleChildScrollView
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Image.asset(
+                  "images/logo2.png",
+                  height: 100,
+                ),
+                SizedBox(height: 20),
+                Container(
+                  width: 300,
+                  child: TextField(
+                    onChanged: (value) {
+                      setState(() {
+                        _userMobile = value;
+                      });
+                    },
+                    keyboardType: TextInputType.phone,
+                    decoration: InputDecoration(
+                      labelText: '휴대폰 번호를 - 없이 입력하세요',
+                      labelStyle: TextStyle(color: Colors.red),
+                      fillColor: Colors.white,
+                      filled: true,
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.blue, width: 2.0),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.blue, width: 2.0),
+                        borderRadius: BorderRadius.circular(12.0),
+                      ),
                     ),
                   ),
                 ),
-              ),
-              SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () async {
-                  final result = await checkMobileInApi(_userMobile);
-                  _showLoginResult(result);
-                },
-                child: Text('로그인'),
-              ),
-            ],
+                SizedBox(height: 30),
+                ElevatedButton(
+                  onPressed: () async {
+                    final result = await checkMobileInApi(_userMobile);
+                    _showLoginResult(result);
+                  },
+                  child: Text('로그인'),
+                ),
+                SizedBox(height: 30),
+                Image.asset(
+                  "images/gana_w2.png",
+                  height: 20,
+                  width: 200,
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -199,39 +223,38 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 }
 
-class WebViewScreen extends StatelessWidget {
+class WebViewScreen extends StatefulWidget {
   const WebViewScreen({Key? key}) : super(key: key);
 
   @override
+  _WebViewScreenState createState() => _WebViewScreenState();
+}
+
+class _WebViewScreenState extends State<WebViewScreen> {
+  late InAppWebViewController _webViewController; // WebView 컨트롤러 선언
+
+  @override
   Widget build(BuildContext context) {
-    final Uri url = Uri.parse(
-        'https://hhicm.gananet.co.kr/build/index.php');
+    final Uri url = Uri.parse('https://hhicm.gananet.co.kr/build/index.php');
 
     return Scaffold(
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed, // item 4개 이상일 경우 추가 해야함
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: '홈',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.receipt),
-            label: '회칙',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.public),
-            label: '공조위원',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.group),
-            label: '회원 연락처',
-          ),
-        ],
-      ),
-      body: InAppWebView(
-        initialUrlRequest: URLRequest(url: WebUri.uri(url)), // WebUri 대신에 Uri 객체를 바로 사용
+      body: WillPopScope( // WillPopScope 추가
+        onWillPop: () async {
+          if (await _webViewController.canGoBack()) { // 웹뷰에서 뒤로 갈 수 있는지 확인
+            _webViewController.goBack(); // 뒤로가기 수행
+            return false; // 뒤로가기 수행되었으므로 이벤트 처리 완료
+          } else {
+            return true; // 웹뷰에서 뒤로 갈 수 없으면 앱 종료
+          }
+        },
+        child: InAppWebView(
+          initialUrlRequest: URLRequest(url: WebUri.uri(url)),
+          onWebViewCreated: (controller) {
+            _webViewController = controller; // WebView 컨트롤러 할당
+          },
+        ),
       ),
     );
   }
 }
+
