@@ -3,27 +3,20 @@ import 'package:note/constants.dart';
 import 'package:note/screens/memberlist/memberlist.dart';
 import 'package:note/screens/jigoo/jigoo.dart';
 import 'package:note/screens/palgaklist/palgaklist.dart';
+import 'package:note/screens/home/searchresultscreen.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({Key? key}) : super(key: key);
+
+
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: buildAppBar(),
-      body: Column(
-        children: [
-          Divider(
-            color: Colors.grey,
-            thickness: 1.0,
-          ),
-          Expanded(
-            child: SingleChildScrollView(
-              child: BodyScreen(),
-            ),
-          ),
-        ],
-      ),
+      body: BodyScreen(),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
@@ -75,6 +68,8 @@ class HomeScreen extends StatelessWidget {
   }
 }
 
+final TextEditingController _searchController = TextEditingController();
+
 class BodyScreen extends StatelessWidget {
   const BodyScreen({Key? key}) : super(key: key);
 
@@ -91,25 +86,35 @@ class BodyScreen extends StatelessWidget {
           ),
           Column(
             children: [
-              Padding(
-                padding: const EdgeInsets.all(15.0),
-                child: TextField(
-                  style: TextStyle(fontSize: 15.0),
-                  decoration: InputDecoration(
-                    hintText: '회원명 검색',
-                    hintStyle: TextStyle(color: Colors.grey),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(40.0)),
-                      borderSide: BorderSide(
-                        color: kPrimaryColor,
-                        width: 3,
-                      ),
+              TextField(
+                controller: _searchController, // _searchController 설정
+                style: TextStyle(fontSize: 15.0),
+                decoration: InputDecoration(
+                  hintText: '회원명 검색',
+                  hintStyle: TextStyle(color: Colors.grey),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(40.0)),
+                    borderSide: BorderSide(
+                      color: kPrimaryColor,
+                      width: 3,
                     ),
-                    contentPadding: EdgeInsets.symmetric(
-                      vertical: 15.0,
-                      horizontal: 20.0,
-                    ),
-                    suffixIcon: Icon(Icons.search, color: Colors.grey),
+                  ),
+                  contentPadding: EdgeInsets.symmetric(
+                    vertical: 15.0,
+                    horizontal: 20.0,
+                  ),
+                  suffixIcon: IconButton(
+                    icon: Icon(Icons.search, color: Colors.grey),
+                    onPressed: () {
+                      // _searchController를 사용하여 검색어 획득
+                      String searchWord = _searchController.text.trim();
+                      print('검색: $searchWord');
+                      print('검색어 (공백 제거 전): ${_searchController.text}');
+                      // 검색어가 비어있지 않다면 searchMember 함수 호출
+                      if (searchWord.isNotEmpty) {
+                        searchMember(context, searchWord);
+                      }
+                    },
                   ),
                 ),
               ),
@@ -148,7 +153,7 @@ class BodyScreen extends StatelessWidget {
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => PalgakScreen()),
+                        MaterialPageRoute(builder: (context) => ContentListScreen()),
                       );
                     },
                     child: Container(
@@ -187,3 +192,32 @@ class BodyScreen extends StatelessWidget {
   }
 }
 
+
+// 검색을 수행하는 함수
+Future<void> searchMember(BuildContext context,String searchWord) async {
+  var endpoint = 'http://ntpalgak.gananet.co.kr/api/member.php';
+  var queryParameters = {
+    'search_type': 'mber_name',
+    'search_word': searchWord,
+  };
+
+  var uri = Uri.parse(endpoint).replace(queryParameters: queryParameters);
+
+  try {
+    var response = await http.get(uri);
+
+    if (response.statusCode == 200) {
+      var jsonData = json.decode(response.body);
+      print('Search API Response: $jsonData'); // API 응답 로그 출력
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => SearchResultScreen(searchResults: jsonData, searchWord:searchWord,)),
+      );
+
+    } else {
+      print('Failed to load data: ${response.statusCode}');
+    }
+  } catch (e) {
+    print('Error: $e');
+  }
+}

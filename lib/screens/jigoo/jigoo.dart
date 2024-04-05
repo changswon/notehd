@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:note/screens/jigoo/memberdetailscreen.dart';
 
 Future<List<Member>> fetchMembers() async {
-  final response = await http.get(Uri.parse('http://ntpalgak.gananet.co.kr/api/member.php?co_id=CON_00000001'));
+  final response = await http.get(Uri.parse('http://ntpalgak.gananet.co.kr/api/register.php?co_id=CON_00000001'));
 
   if (response.statusCode == 200) {
     final Map<String, dynamic> data = json.decode(response.body);

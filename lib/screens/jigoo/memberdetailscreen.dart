@@ -10,8 +10,7 @@ import 'package:url_launcher/url_launcher.dart';
 class MemberDetailScreen extends StatelessWidget {
   final Member member;
 
-  MemberDetailScreen({required this.member});
-
+  const MemberDetailScreen({Key? key, required this.member}) : super(key: key);
 
 
 
@@ -31,15 +30,15 @@ class MemberDetailScreen extends StatelessWidget {
               // 이미지 표시
               if (member.imgUrl != null) // 이미지 URL이 존재하는 경우에만 표시
                 SizedBox(
-                  width: 300,
-                  height: 400,
+                  width: 200,
+                  height: 300,
                   child: Image.network(
                     member.imgUrl!,
                     fit: BoxFit.cover,
                     errorBuilder: (context, error, stackTrace) {
                       // 이미지 로드 중 오류 발생 시 기본 이미지 표시
                       return Image.asset(
-                        '/images/memberimage.png',
+                        'images/memberimage.png',
                         fit: BoxFit.cover,
                       );
                     },
@@ -64,7 +63,7 @@ class MemberDetailScreen extends StatelessWidget {
               ),
               Text(
                 '업체명: ${member.companyNm}',
-                style: TextStyle(fontSize: 20), // 글자 크기 조정
+                style: TextStyle(fontSize: 20),
               ),
 
               Text(
