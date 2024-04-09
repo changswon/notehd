@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'dart:io';
 import 'dart:convert';
+import 'package:note/screens/home/home.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -38,13 +38,12 @@ class _LoginScreenState extends State<LoginScreen> {
     DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
     AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
     String device_info = '${androidInfo.serialNumber}';
-    final apiKey = '36l9njKiZB';
     final apiUrl =
-        'https://hhicm.gananet.co.kr/build/api/phone_check.php?api_key=$apiKey&mobile=$mobile&device_info=$device_info';
+        'http://ntpalgak.gananet.co.kr/api/login.php?mobile=$mobile&device_info=$device_info&check=PC';
 
     try {
       final response = await http.get(Uri.parse(apiUrl));
-
+        print('$apiUrl');
       if (response.statusCode == 200) {
         print('요청: ${response.body}');
         return Map<String, dynamic>.from(json.decode(response.body));
@@ -64,9 +63,8 @@ class _LoginScreenState extends State<LoginScreen> {
     AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
     String device_info = '${androidInfo.serialNumber}';
 
-    final apiKey = '36l9njKiZB';
     final apiUrl =
-        'https://hhicm.gananet.co.kr/build/api/phone_change.php?api_key=$apiKey&mobile=$mobile&device_info=$device_info';
+        'http://ntpalgak.gananet.co.kr/api/login.php?mobile=$mobile&device_info=$device_info&check=PA';
     try {
       final response = await http.get(Uri.parse(apiUrl));
 
@@ -79,6 +77,12 @@ class _LoginScreenState extends State<LoginScreen> {
     } catch (e) {
       print('API 요청 중 예외 발생: $e');
     }
+  }
+  void _navigateToWebView() {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => HomeScreen()),
+    );
   }
 
   void _showLoginResult(Map<String, dynamic> result) async {
@@ -118,7 +122,7 @@ class _LoginScreenState extends State<LoginScreen> {
         );
       } else {
         print('로그인 성공');
-        _navigateToWebView();
+        HomeScreen();
       }
     } else {
       // 로그인 실패 시 처리
@@ -149,13 +153,6 @@ class _LoginScreenState extends State<LoginScreen> {
     return true; // 임시로 성공 상태 반환
   }
 
-  void _navigateToWebView() {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => WebViewScreen()),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -172,7 +169,7 @@ class _LoginScreenState extends State<LoginScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Image.asset(
-                  "images/logo2.png",
+                  "images/18_logo2.png",
                   height: 100,
                 ),
                 SizedBox(height: 20),
@@ -187,7 +184,6 @@ class _LoginScreenState extends State<LoginScreen> {
                     keyboardType: TextInputType.phone,
                     decoration: InputDecoration(
                       labelText: '휴대폰 번호를 - 없이 입력하세요',
-                      labelStyle: TextStyle(color: Colors.red),
                       fillColor: Colors.white,
                       filled: true,
                       focusedBorder: OutlineInputBorder(
@@ -223,39 +219,3 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 }
 
-class WebViewScreen extends StatelessWidget {
-  const WebViewScreen({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    final Uri url = Uri.parse(
-        'https://hhicm.gananet.co.kr/build/index.php');
-
-    return Scaffold(
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed, // item 4개 이상일 경우 추가 해야함
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: '홈',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.receipt),
-            label: '회칙',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.public),
-            label: '공조위원',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.group),
-            label: '회원 연락처',
-          ),
-        ],
-      ),
-      body: InAppWebView(
-        initialUrlRequest: URLRequest(url: WebUri.uri(url)), // WebUri 대신에 Uri 객체를 바로 사용
-      ),
-    );
-  }
-}

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:note/screens/palgaklist/detailscreen.dart';
 
 // API로부터 데이터 가져오기
 Future<List<Content>> fetchContents() async {
@@ -51,6 +52,17 @@ class _ContentListScreenState extends State<ContentListScreen> {
     _contents = fetchContents();
   }
 
+  void _navigateToDetailScreen(BuildContext context, String coId, String coSubject) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => DetailScreen( coId: coId, coSubject: coSubject,),
+      ),
+    );
+  }
+
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -79,7 +91,7 @@ class _ContentListScreenState extends State<ContentListScreen> {
                       ),
                     ),
                     onTap: () {
-                      // 클릭한 목록에 대한 동작 추가 가능
+                      _navigateToDetailScreen(context, content.coId, content.coSubject);
                     },
                   ),
                 );

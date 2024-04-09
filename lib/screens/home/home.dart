@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:note/constants.dart';
-import 'package:note/screens/memberlist/memberlist.dart';
 import 'package:note/screens/jigoo/jigoo.dart';
 import 'package:note/screens/palgaklist/palgaklist.dart';
 import 'package:note/screens/home/searchresultscreen.dart';
+import 'package:note/screens/home/privacypoilcescreen.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
@@ -24,19 +24,15 @@ class HomeScreen extends StatelessWidget {
             label: '홈',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.people),
-            label: '전체 연락처',
-          ),
-          BottomNavigationBarItem(
             icon: Icon(Icons.notifications),
             label: '개인정보처리방침',
           ),
         ],
-        onTap: (int index) {
+        onTap: (index) {
           if (index == 1) {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => MemberListScreen()),
+              MaterialPageRoute(builder: (context) => PrivacyPolicyScreen()),
             );
           }
         },
@@ -84,6 +80,7 @@ class BodyScreen extends StatelessWidget {
             height: 200.0,
             width: 410.0,
           ),
+          SizedBox(height: 20,),
           Column(
             children: [
               TextField(
@@ -106,11 +103,7 @@ class BodyScreen extends StatelessWidget {
                   suffixIcon: IconButton(
                     icon: Icon(Icons.search, color: Colors.grey),
                     onPressed: () {
-                      // _searchController를 사용하여 검색어 획득
                       String searchWord = _searchController.text.trim();
-                      print('검색: $searchWord');
-                      print('검색어 (공백 제거 전): ${_searchController.text}');
-                      // 검색어가 비어있지 않다면 searchMember 함수 호출
                       if (searchWord.isNotEmpty) {
                         searchMember(context, searchWord);
                       }
@@ -118,6 +111,7 @@ class BodyScreen extends StatelessWidget {
                   ),
                 ),
               ),
+              SizedBox(height: 20,),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
@@ -130,7 +124,7 @@ class BodyScreen extends StatelessWidget {
                       );
                     },
                     child: Container(
-                      height: 100,
+                      height: 120,
                       width: MediaQuery.of(context).size.width * 0.4,
                       margin: EdgeInsets.all(10),
                       decoration: BoxDecoration(
@@ -157,7 +151,7 @@ class BodyScreen extends StatelessWidget {
                       );
                     },
                     child: Container(
-                      height: 100,
+                      height: 120,
                       width: MediaQuery.of(context).size.width * 0.4,
                       margin: EdgeInsets.all(10),
                       decoration: BoxDecoration(
@@ -181,7 +175,7 @@ class BodyScreen extends StatelessWidget {
               ),
               Image.asset(
                 'images/gana.jpg',
-                height: 130.0,
+                height: 150.0,
                 width: 410.0,
               ),
             ],

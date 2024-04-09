@@ -21,7 +21,6 @@ linter:
   # `// ignore_for_file: name_of_lint` syntax on the line or in the file
   # producing the lint.
   rules:
-    missing_reauired_param: false
     prefer_const_declarations: false
     prefer_const_constructors: false
 

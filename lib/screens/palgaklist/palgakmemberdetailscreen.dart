@@ -1,17 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:note/screens/jigoo/jigoo.dart';
+import 'package:note/screens/palgaklist/detailscreen.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-// 새로운 화면 클래스 정의
-
-
-
-class MemberDetailScreen extends StatelessWidget {
+class PalgakMemberDetailScreen extends StatelessWidget {
   final Member member;
 
-  const MemberDetailScreen({Key? key, required this.member}) : super(key: key);
-
-
+  const PalgakMemberDetailScreen({Key? key, required this.member}): super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -22,6 +16,11 @@ class MemberDetailScreen extends StatelessWidget {
       body: Center(
         child: Padding(
           padding: EdgeInsets.all(16.0),
+          child: Container(
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey), // 테두리 스타일
+              borderRadius: BorderRadius.circular(8), // 테두리 모서리 둥글기
+              ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -97,6 +96,7 @@ class MemberDetailScreen extends StatelessWidget {
                 ),
               ),
             ],
+           ),
           ),
         ),
       ),

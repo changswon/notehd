@@ -14,7 +14,7 @@ class SearchResultScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // 검색 결과에서 회원 목록을 추출합니다.
-    List<dynamic> members = searchResults['member'];
+    List<dynamic> members = searchResults['member'] ?? [];
 
     // 검색어가 비어 있는 경우에는 전체 회원 목록을 표시합니다.
     if (searchWord.isEmpty) {
@@ -42,17 +42,17 @@ class SearchResultScreen extends StatelessWidget {
     // 검색어가 비어 있지 않은 경우에는 검색어와 일치하는 회원만 표시합니다.
     List<dynamic> matchedMembers = members.where((member) {
       final name = member['mber_name'];
-      return name.toLowerCase().contains(searchWord.toLowerCase());
+      return name?.toLowerCase().contains(searchWord.toLowerCase()) ?? false;
     }).toList();
 
-    // 일치하는 회원이 없는 경우에는 메시지를 표시합니다.
+    // 검색 결과가 없는 경우에는 메시지를 표시합니다.
     if (matchedMembers.isEmpty) {
       return Scaffold(
         appBar: AppBar(
           title: Text('검색 결과'),
         ),
         body: Center(
-          child: Text('검색 결과가 없습니다.'),
+          child: Text('등록된 회원이 아닙니다.'),
         ),
       );
     }
