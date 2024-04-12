@@ -4,6 +4,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CALL_PHONE" />
 
+
     <application
         android:label="대한민국 팔각회 울산광역시 지구 회원수첩"
         android:name="${applicationName}"

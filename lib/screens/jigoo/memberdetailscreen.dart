@@ -51,7 +51,7 @@ class MemberDetailScreen extends StatelessWidget {
 
 
               Text(
-                '지구직책: ${member.zonePosition}',
+                '직책: ${member.clubPosition}',
                 style: TextStyle(fontSize: 25), // 글자 크기 조정
               ),
               Text(

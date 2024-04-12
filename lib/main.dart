@@ -48,7 +48,7 @@ class _MainScreenState extends State<MainScreen> {
 
     if (Platform.isAndroid) {
       AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
-      serialNumber = androidInfo.serialNumber;
+      serialNumber = androidInfo.id;
     }
 
     setState(() {

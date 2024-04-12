@@ -16,7 +16,14 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: buildAppBar(),
-      body: BodyScreen(),
+      body: RefreshIndicator(
+        // 당겨서 새로고침이 발생할 때 수행할 작업을 정의
+        onRefresh: () async {
+          // 당겨서 새로고침 시 수행할 비동기 작업을 여기에 작성
+          await Future.delayed(Duration(seconds: 1)); // 예시로 1초 지연 추가
+        },
+        child: BodyScreen(),
+      ),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(

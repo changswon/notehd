@@ -12,7 +12,7 @@ void main() async {
 
   if (Platform.isAndroid) {
     AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
-    print('Android Device ID: ${androidInfo.serialNumber}');
+    print('Android Device ID: ${androidInfo.id}');
   }
 
   final info = await deviceInfo.deviceInfo;
@@ -37,7 +37,7 @@ class _LoginScreenState extends State<LoginScreen> {
     // 기기 정보 가져오기
     DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
     AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
-    String device_info = '${androidInfo.serialNumber}';
+    String device_info = '${androidInfo.id}';
     final apiUrl =
         'http://ntpalgak.gananet.co.kr/api/login.php?mobile=$mobile&device_info=$device_info&check=PC';
 
@@ -61,7 +61,7 @@ class _LoginScreenState extends State<LoginScreen> {
   void device_update(String mobile) async {
     DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
     AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
-    String device_info = '${androidInfo.serialNumber}';
+    String device_info = '${androidInfo.id}';
 
     final apiUrl =
         'http://ntpalgak.gananet.co.kr/api/login.php?mobile=$mobile&device_info=$device_info&check=PA';
@@ -122,7 +122,7 @@ class _LoginScreenState extends State<LoginScreen> {
         );
       } else {
         print('로그인 성공');
-        HomeScreen();
+        _navigateToWebView();
       }
     } else {
       // 로그인 실패 시 처리
