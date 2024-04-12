@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:note/screens/jigoo/jigoo.dart';
 import 'package:url_launcher/url_launcher.dart';
-
-// 새로운 화면 클래스 정의
-
-
+import 'package:permission_handler/permission_handler.dart';
 
 class MemberDetailScreen extends StatelessWidget {
   final Member member;
@@ -22,6 +19,11 @@ class MemberDetailScreen extends StatelessWidget {
       body: Center(
         child: Padding(
           padding: EdgeInsets.all(16.0),
+            child: Container(
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey), // 테두리 스타일
+                borderRadius: BorderRadius.circular(8), // 테두리 모서리 둥글기
+                ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -99,16 +101,21 @@ class MemberDetailScreen extends StatelessWidget {
             ],
           ),
         ),
+       ),
       ),
     );
   }
 
   _launchCaller(String phoneNumber) async {
-    final url = '$phoneNumber';
-    if (await canLaunch(url)) {
-      await launch(url);
+    final url = 'tel:$phoneNumber';
+    if (await Permission.phone.request().isGranted) {
+      if (await canLaunch(url)) {
+        await launch(url);
+      } else {
+        throw 'Could not launch $url';
+      }
     } else {
-      throw 'Could not launch $url';
+      print('전화 권한이 필요합니다.');
     }
   }
 }

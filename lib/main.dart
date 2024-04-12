@@ -7,7 +7,6 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 void main() {
-  WidgetsFlutterBinding.ensureInitialized();
   runApp(MyApp());
 }
 
@@ -22,7 +21,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         // Your theme settings here
       ),
-      home: MainScreen(), // LoginScreen으로 변경
+      home: MainScreen(),
     );
   }
 }
@@ -67,27 +66,16 @@ class _MainScreenState extends State<MainScreen> {
       final response = await http.get(Uri.parse(apiUrl));
 
       if (response.statusCode == 200) {
-        // API 호출 성공
-        print('Serial number sent successfully');
-        print('요청: ${response.body}');
-        // 성공 시 메인 페이지로 이동
-        // JSON 응답 파싱
         Map<String, dynamic> jsonResponse = json.decode(response.body);
-
-        // 'device' 값을 읽어오기
         String deviceValue = jsonResponse['device'];
-
-        // 결과 출력
         print('요청: $deviceValue');
 
         if (deviceValue == 'true') {
-          // 로그인 성공: 웹뷰 화면으로 이동
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (context) => HomeScreen()),
           );
         } else {
-          // 로그인 실패: 로그인 페이지로 이동
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (context) => LoginScreen()),

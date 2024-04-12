@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
-
+import 'package:permission_handler/permission_handler.dart';
 
 class SearchResultDetailScreen extends StatelessWidget {
   final Member member;
@@ -100,11 +100,15 @@ class SearchResultDetailScreen extends StatelessWidget {
   }
 
   _launchCaller(String phoneNumber) async {
-    final url = '$phoneNumber';
-    if (await canLaunch(url)) {
-      await launch(url);
+    final url = 'tel:$phoneNumber';
+    if (await Permission.phone.request().isGranted) {
+      if (await canLaunch(url)) {
+        await launch(url);
+      } else {
+        throw 'Could not launch $url';
+      }
     } else {
-      throw 'Could not launch $url';
+      print('전화 권한이 필요합니다.');
     }
   }
 }
