@@ -70,7 +70,7 @@ class _MainScreenState extends State<MainScreen> {
         String deviceValue = jsonResponse['device'];
         print('요청: $deviceValue');
 
-        if (deviceValue == 'true') {
+        if (deviceValue == 'false') {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (context) => HomeScreen()),

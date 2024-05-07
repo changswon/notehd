@@ -81,48 +81,52 @@ class _LoginScreenState extends State<LoginScreen> {
   void _navigateToWebView() {
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) => HomeScreen()),
+      MaterialPageRoute(builder: (context) => LoginScreen()),
     );
   }
 
   void _showLoginResult(Map<String, dynamic> result) async {
     if (result['mobile'] == 'success') {
       if (result['already'] == 'Y') {
-        String mobile_num = result['mobile_num'];
         // 이미 등록된 기기가 있을 때 처리
         showDialog(
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
               title: Text("경고"),
-              content: Text("이미 등록된 기기가 있습니다. 새롭게 등록하시겠습니까?"),
+              content: Text("해당 번호로 이미 등록된 기기가 있습니다. 관리자에게 문의해주세요."),
               actions: [
-                ElevatedButton(
-                  onPressed: () async {
-                    Navigator.of(context).pop(); // 다이얼로그 닫기
-                    final registerResult = await _registerDevice();
-                    if (registerResult) {
-                      //_navigateToWebView();
-                      device_update(mobile_num);
-                    } else {
-                      print('기기 등록 실패');
-                    }
-                  },
-                  child: Text("네"),
-                ),
                 ElevatedButton(
                   onPressed: () {
                     Navigator.of(context).pop(); // 다이얼로그 닫기
+                    _navigateToWebView(); // 웹 뷰로 이동
                   },
-                  child: Text("아니오"),
+                  child: Text("확인"),
                 ),
               ],
             );
           },
         );
       } else {
-        print('로그인 성공');
-        _navigateToWebView();
+        // 등록 성공 알림 표시
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text("등록 성공"),
+              content: Text("등록되었습니다."),
+              actions: [
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(); // 다이얼로그 닫기
+                    _navigateToHomeScreen(); // 홈 화면으로 이동
+                  },
+                  child: Text("확인"),
+                ),
+              ],
+            );
+          },
+        );
       }
     } else {
       // 로그인 실패 시 처리
@@ -143,14 +147,14 @@ class _LoginScreenState extends State<LoginScreen> {
           );
         },
       );
-      print('로그인 실패');
     }
   }
 
-  Future<bool> _registerDevice() async {
-    // 기기 등록 처리를 여기에 구현
-    print('새로운 기기로 등록합니다.');
-    return true; // 임시로 성공 상태 반환
+  void _navigateToHomeScreen() {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => HomeScreen()),
+    );
   }
 
   @override
@@ -169,7 +173,7 @@ class _LoginScreenState extends State<LoginScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Image.asset(
-                  "images/18_logo2.png",
+                  "images/17_logo.png",
                   height: 100,
                 ),
                 SizedBox(height: 20),

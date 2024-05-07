@@ -1,4 +1,4 @@
-package com.gana.palgaknote
+package com.gana.notehd
 
 import io.flutter.embedding.android.FlutterActivity
 

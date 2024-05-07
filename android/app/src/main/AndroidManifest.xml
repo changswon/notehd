@@ -6,7 +6,7 @@
 
 
     <application
-        android:label="대한민국 팔각회 울산광역시 지구 회원수첩"
+        android:label="현대중공업 사내 협력회사 회원수첩"
         android:name="${applicationName}"
         android:icon="@mipmap/hhic">
 
