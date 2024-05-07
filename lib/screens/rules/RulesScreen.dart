@@ -13,7 +13,7 @@ class RulesScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              '현.중(주) 사내협력회사 협의회 회칙',
+              '현.중(주) 사내협력회사 협의회 회칙!',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 18.0,
